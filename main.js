@@ -1,96 +1,89 @@
-const game = {
-  sequence: [],
-  humanSequence: [],
-  level: 0,
-};
+let sequence = [];
+let humanSequence = [];
+let level = 0;
 
-const startButton = document.querySelector('.start-button');
-const info = document.querySelector('.info');
-const heading = document.querySelector('.heading');
-const tileContainer = document.querySelector('.tile-container');
+const startButton = document.querySelector('.js-start');
+const info = document.querySelector('.js-info');
+const heading = document.querySelector('.js-heading');
+const tileContainer = document.querySelector('.js-container');
 
 function resetGame(text) {
   alert(text);
-  game.sequence = [];
-  game.humanSequence = [];
-  game.level = 0;
+  sequence = [];
+  humanSequence = [];
+  level = 0;
   startButton.classList.remove('hidden');
   heading.textContent = 'Simon Game';
   info.classList.add('hidden');
   tileContainer.classList.add('unclickable');
 }
 
-function stopAllSounds() {
-  document.querySelectorAll('audio').forEach(audio => audio.pause());
-}
-
-function humanTurn(counter) {
+function humanTurn(level) {
   tileContainer.classList.remove('unclickable');
-  info.textContent = `Your turn: ${counter} Tap${counter > 1 ? 's' : ''}`;
+  info.textContent = `Your turn: ${level} Tap${level > 1 ? 's' : ''}`;
 }
 
-function triggerClick(tile) {
-  const tileToClick = document.querySelector(`[data-tile='${tile}']`);
-  const soundToPlay = document.querySelector(`[data-sound='${tile}']`);
-  stopAllSounds();
-  soundToPlay.play();
+function activateTile(color) {
+  const tile = document.querySelector(`[data-tile='${color}']`);
+  const sound = document.querySelector(`[data-sound='${color}']`);
 
-  tileToClick.classList.add('activated');
+  tile.classList.add('activated');
+  sound.play();
+
   setTimeout(() => {
-    tileToClick.classList.remove('activated');
+    tile.classList.remove('activated');
   }, 300);
 }
 
-function nextStep() {
-  const tiles = ['red', 'green', 'blue', 'yellow'];
-  const randomNumber = Math.floor(Math.random() * tiles.length);
-
-  return tiles[randomNumber];
-}
-
 function playRound(nextSequence) {
-  nextSequence.forEach((tile, index) => {
+  nextSequence.forEach((color, index) => {
     setTimeout(() => {
-      triggerClick(tile);
+      activateTile(color);
     }, (index + 1) * 600);
   });
 }
 
+function nextStep() {
+  const tiles = ['red', 'green', 'blue', 'yellow'];
+  const random = tiles[Math.floor(Math.random() * tiles.length)];
+
+  return random;
+}
+
 function nextRound() {
-  game.level += 1;
+  level += 1;
 
   tileContainer.classList.add('unclickable');
   info.textContent = 'Wait for the computer';
-  heading.textContent = `Level ${game.level} of 20`;
-  const nextSequence = [...game.sequence];
+  heading.textContent = `Level ${level} of 20`;
+
+  const nextSequence = [...sequence];
   nextSequence.push(nextStep());
   playRound(nextSequence);
 
-  game.sequence = [...nextSequence];
+  sequence = [...nextSequence];
   setTimeout(() => {
-    humanTurn(game.level);
-  }, game.level * 600 + 1000);
+    humanTurn(level);
+  }, level * 600 + 1000);
 }
 
-function handleHumanTurn(tile) {
-  const index = game.humanSequence.push(tile) - 1;
-  const soundToPlay = document.querySelector(`[data-sound='${tile}']`);
-  stopAllSounds();
-  soundToPlay.play();
+function handleClick(tile) {
+  const index = humanSequence.push(tile) - 1;
+  const sound = document.querySelector(`[data-sound='${tile}']`);
+  sound.play();
 
-  const remainingTaps = game.sequence.length - game.humanSequence.length;
+  const remainingTaps = sequence.length - humanSequence.length;
 
-  if (game.humanSequence[index] !== game.sequence[index]) {
+  if (humanSequence[index] !== sequence[index]) {
     return resetGame('Oops! Game over, you pressed the wrong tile.');
   }
 
-  if (game.humanSequence.length === game.sequence.length) {
-    if (game.humanSequence.length === 20) {
-      stopAllSounds();
+  if (humanSequence.length === sequence.length) {
+    if (humanSequence.length === 20) {
       return resetGame('Congrats, You Legend! You completed all the levels');
     }
 
-    game.humanSequence = [];
+    humanSequence = [];
     info.textContent = 'Success! Keep going!';
     setTimeout(() => {
       nextRound();
@@ -106,7 +99,6 @@ function handleHumanTurn(tile) {
 function startGame() {
   startButton.classList.add('hidden');
   info.classList.remove('hidden');
-  info.textContent = 'Wait for the computer';
   tileContainer.classList.remove('unclickable');
   nextRound();
 }
@@ -115,5 +107,5 @@ startButton.addEventListener('click', startGame);
 tileContainer.addEventListener('click', event => {
   const { tile } = event.target.dataset;
 
-  if (tile) handleHumanTurn(tile);
+  if (tile) handleClick(tile);
 });

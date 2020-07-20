@@ -37,7 +37,7 @@ body {
 
 header {
   text-align: center;
-  font-size: 18px;
+  margin-bottom: 50px;
 }
 
 .heading {
@@ -46,12 +46,12 @@ header {
 
 .tile-container {
   display: grid;
-  grid-template-rows: 250px 250px;
-  grid-template-columns: 250px 250px;
-  grid-gap: 25px;
+  grid-template-rows: 180px 180px;
+  grid-template-columns: 180px 180px;
+  grid-gap: 40px;
   position: relative;
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .unclickable {

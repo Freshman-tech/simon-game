@@ -1,9 +1,9 @@
 {
-  "name": "simon",
+  "name": "freshman-simon",
   "version": "1.0.0",
   "description": "A Simon game made with JavaScript",
   "main": "main.js",
-  "repository": "github.com/Freshman-tech/simon",
+  "repository": "github.com/Freshman-tech/simon-game",
   "author": "Ayooluwa Isaiah",
   "license": "MIT",
   "scripts": {
